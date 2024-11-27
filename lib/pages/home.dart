@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
+import 'package:nightride/pages/login.dart';
+import 'package:nightride/pages/loginQR.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -108,7 +110,7 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    "Login with Form",
+                    "Iniciar sesión",
                     style: TextStyle(
                       fontSize: 16,
                       fontFamily: 'Bungee',
@@ -131,7 +133,7 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    "Login with QR",
+                    "Iniciar sesión con QR",
                     style: TextStyle(
                       fontSize: 16,
                       fontFamily: 'Bungee',
@@ -160,32 +162,3 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class LoginFormPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Login with Form"),
-        backgroundColor: Colors.black,
-      ),
-      body: Center(
-        child: Text("Login Form Page Content"),
-      ),
-    );
-  }
-}
-
-class QRLoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Login with QR"),
-        backgroundColor: Colors.black,
-      ),
-      body: Center(
-        child: Text("QR Login Page Content"),
-      ),
-    );
-  }
-}
