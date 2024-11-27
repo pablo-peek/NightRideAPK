@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../controllers/loginController.dart';
+import 'register.dart';
+
 class LoginFormPage extends StatefulWidget {
   const LoginFormPage({super.key});
 
@@ -8,9 +11,10 @@ class LoginFormPage extends StatefulWidget {
 }
 
 class _LoginFormPageState extends State<LoginFormPage> {
-  final _formKey = GlobalKey<FormState>();
-  bool _isPasswordVisible = false;
-
+  final LoginController _controller = LoginController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +80,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
                           ],
                         ),
                         child: Form(
-                          key: _formKey,
+                          key: _controller.formKey,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -94,8 +98,8 @@ class _LoginFormPageState extends State<LoginFormPage> {
                               ),
                               SizedBox(height: 16),
 
-                              // Campo de correo
                               TextFormField(
+                                controller: _emailController,
                                 decoration: InputDecoration(
                                   labelText: "Correo electrónico",
                                   labelStyle: TextStyle(
@@ -125,9 +129,9 @@ class _LoginFormPageState extends State<LoginFormPage> {
                               ),
                               SizedBox(height: 16),
 
-                              // Campo de contraseña
                               TextFormField(
-                                obscureText: !_isPasswordVisible,
+                                controller: _passwordController,
+                                obscureText: !_controller.isPasswordVisible,
                                 decoration: InputDecoration(
                                   labelText: "Contraseña",
                                   labelStyle: TextStyle(
@@ -137,14 +141,14 @@ class _LoginFormPageState extends State<LoginFormPage> {
                                   prefixIcon: Icon(Icons.lock, color: Colors.deepPurple),
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      _isPasswordVisible
+                                      _controller.isPasswordVisible
                                           ? Icons.visibility
                                           : Icons.visibility_off,
                                       color: Colors.deepPurple,
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        _isPasswordVisible = !_isPasswordVisible;
+                                        _controller.isPasswordVisible = !_controller.isPasswordVisible;
                                       });
                                     },
                                   ),
@@ -178,12 +182,11 @@ class _LoginFormPageState extends State<LoginFormPage> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    // Lógica para procesar el inicio de sesión
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("Iniciando sesión...")),
-                                    );
-                                  }
+                                  _controller.login(
+                                    context,
+                                    _emailController.text,
+                                    _passwordController.text,
+                                  );
                                 },
                                 child: Text(
                                   "Iniciar Sesión",
@@ -230,10 +233,8 @@ class _LoginFormPageState extends State<LoginFormPage> {
                   ),
                 ),
 
-                // Spacer para empujar el footer hacia abajo
                 Spacer(),
 
-                // Footer
                 Container(
                   padding: const EdgeInsets.all(16.0),
                   alignment: Alignment.center,
@@ -251,22 +252,6 @@ class _LoginFormPageState extends State<LoginFormPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-// Pantalla de registro simulada
-class RegisterPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Registro"),
-        backgroundColor: Colors.deepPurple,
-      ),
-      body: Center(
-        child: Text("Pantalla de registro"),
       ),
     );
   }
