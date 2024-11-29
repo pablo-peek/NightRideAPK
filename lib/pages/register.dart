@@ -12,6 +12,7 @@ class RegisterPage extends StatelessWidget {
       body: Center(
         child: Text("Pantalla de registro"),
       ),
+
     );
   }
 }

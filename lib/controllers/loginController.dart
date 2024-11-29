@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nightride/pages/login.dart';
 import '../models/user.dart';
-import '../pages/dashboard.dart';
+import '../pages/dashboardRaceOne.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController {
@@ -40,9 +40,10 @@ class LoginController {
         await prefs.setString('token', token);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DashboardPage()),
+          MaterialPageRoute(builder: (context) => DashboardRaceOnePageState()),
         );
       } else {
+        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error al iniciar sesión")),
         );
