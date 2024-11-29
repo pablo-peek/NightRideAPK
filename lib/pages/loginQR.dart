@@ -1,6 +1,10 @@
+import 'dart:convert'; // Importar dart:convert para jsonDecode
+
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dashboardRaceOne.dart'; // Asegúrate de importar la página
+
 
 class QRLoginPage extends StatefulWidget {
   @override
@@ -21,10 +25,22 @@ class _QRLoginPageState extends State<QRLoginPage> {
             if (barcode.rawValue != null) {
               setState(() {
                 qrCodeResult = barcode.rawValue!;
-                tokenObject = TokenObject(token: qrCodeResult);
+                // Asumimos que el valor escaneado es un JSON
+                final Map<String, dynamic> parsedData =
+                    jsonDecode(qrCodeResult); // Aquí se usa jsonDecode
+                String username = parsedData['username'];
+                String token = parsedData['token'];
+                tokenObject = TokenObject(username: username, token: token);
               });
-              await saveToken(tokenObject!.token);
-              Navigator.pop(context);
+
+              // Guardar username y token
+              await saveToken(tokenObject!.username, tokenObject!.token);
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DashboardRaceOnePageState()),
+              );
             }
           },
         ),
@@ -32,8 +48,9 @@ class _QRLoginPageState extends State<QRLoginPage> {
     );
   }
 
-  Future<void> saveToken(String token) async {
+  Future<void> saveToken(String username, String token) async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
     await prefs.setString('token', token);
   }
 
@@ -72,7 +89,9 @@ class _QRLoginPageState extends State<QRLoginPage> {
         },
       ),
       body: Center(
-        child: Text(tokenObject != null ? 'Token: ${tokenObject!.token}' : qrCodeResult),
+        child: Text(tokenObject != null
+            ? 'Token: ${tokenObject!.token}'
+            : qrCodeResult),
       ),
     );
   }
@@ -99,12 +118,13 @@ class QRView extends StatelessWidget {
 }
 
 class TokenObject {
+  final String username;
   final String token;
 
-  TokenObject({required this.token});
+  TokenObject({required this.username, required this.token});
 
   @override
   String toString() {
-    return 'TokenObject{token: $token}';
+    return 'TokenObject{username: $username, token: $token}';
   }
 }

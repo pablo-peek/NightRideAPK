@@ -23,13 +23,24 @@ class _DashboardRaceOnePageState extends State<DashboardRaceOnePageState> {
   }
 
   void _fetchRacers() async {
-    List<dynamic> racersDynamic = await _racesController.getAllRacers(context, _selectedRaceNumber, _selectedPage, _selectedLimit);
-    List<Map<String, dynamic>> racers = racersDynamic.cast<Map<String, dynamic>>();
-    setState(() {
-      _racers = racers;
-      _totalRacers = racers.length;
-    });
+    List<dynamic> racersDynamic = await _racesController.getAllRacers(
+      context,
+      _selectedRaceNumber,
+      _selectedPage,
+      _selectedLimit,
+    );
+    List<Map<String, dynamic>> racers =
+        racersDynamic.cast<Map<String, dynamic>>();
+
+    // Verificar si el widget está montado antes de llamar a setState
+    if (mounted) {
+      setState(() {
+        _racers = racers;
+        _totalRacers = racers.length;
+      });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -143,48 +154,54 @@ class _DashboardRaceOnePageState extends State<DashboardRaceOnePageState> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    PopupMenuButton<int>(
-                      onSelected: (value) {
-                        setState(() {
-                          _selectedLimit = value;
-                          _selectedPage = 1; // Resetear a la primera página
-                          _fetchRacers();
-                        });
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return [20, 40, 100].map((int choice) {
-                          return PopupMenuItem<int>(
-                            value: choice,
-                            child: Text(choice.toString()),
-                          );
-                        }).toList();
-                      },
-                      child: ElevatedButton(
-                        onPressed: null,
-                        child: Text('Límite ($_selectedLimit)'),
+                    Expanded(
+                      child: PopupMenuButton<int>(
+                        onSelected: (value) {
+                          setState(() {
+                            _selectedLimit = value;
+                            _selectedPage = 1; // Resetear a la primera página
+                            _fetchRacers();
+                          });
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return [20, 40, 100].map((int choice) {
+                            return PopupMenuItem<int>(
+                              value: choice,
+                              child: Text(choice.toString()),
+                            );
+                          }).toList();
+                        },
+                        child: ElevatedButton(
+                          onPressed: null,
+                          child: Text('Límite ($_selectedLimit)'),
+                        ),
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (_selectedPage > 1) {
-                            _selectedPage--;
-                            _fetchRacers();
-                          }
-                        });
-                      },
-                      child: Text('Página Anterior'),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (_selectedPage > 1) {
+                              _selectedPage--;
+                              _fetchRacers();
+                            }
+                          });
+                        },
+                        child: Text('Página Anterior'),
+                      ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (_selectedPage < totalPages) {
-                            _selectedPage++;
-                            _fetchRacers();
-                          }
-                        });
-                      },
-                      child: Text('Página Siguiente'),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (_selectedPage < totalPages) {
+                              _selectedPage++;
+                              _fetchRacers();
+                            }
+                          });
+                        },
+                        child: Text('Página Siguiente'),
+                      ),
                     ),
                   ],
                 ),
