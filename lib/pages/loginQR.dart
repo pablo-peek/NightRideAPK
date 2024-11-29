@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QRLoginPage extends StatefulWidget {
   @override
@@ -8,24 +9,32 @@ class QRLoginPage extends StatefulWidget {
 
 class _QRLoginPageState extends State<QRLoginPage> {
   String qrCodeResult = "No se ha escaneado ningún código QR";
+  TokenObject? tokenObject;
 
   void scanQRCode() async {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => QRView(
-          onDetect: (barcodeCapture) {
+          onDetect: (barcodeCapture) async {
             final barcode = barcodeCapture.barcodes.first;
             if (barcode.rawValue != null) {
               setState(() {
                 qrCodeResult = barcode.rawValue!;
+                tokenObject = TokenObject(token: qrCodeResult);
               });
+              await saveToken(tokenObject!.token);
               Navigator.pop(context);
             }
           },
         ),
       ),
     );
+  }
+
+  Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
   }
 
   @override
@@ -63,7 +72,7 @@ class _QRLoginPageState extends State<QRLoginPage> {
         },
       ),
       body: Center(
-        child: Text(qrCodeResult),
+        child: Text(tokenObject != null ? 'Token: ${tokenObject!.token}' : qrCodeResult),
       ),
     );
   }
@@ -86,5 +95,16 @@ class QRView extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+class TokenObject {
+  final String token;
+
+  TokenObject({required this.token});
+
+  @override
+  String toString() {
+    return 'TokenObject{token: $token}';
   }
 }
